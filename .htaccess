@@ -1,0 +1,32 @@
+# Konfigurasi keamanan dasar
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Arahkan akses root ke index.php
+  DirectoryIndex index.php
+</IfModule>
+
+# Blokir akses ke file database SQLite
+<FilesMatch "\.(sqlite|sqlite3|db|db-wal|db-shm)$">
+  Require all denied
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Sembunyikan file sensitif
+<FilesMatch "^(config\.php|README\.md|\.htaccess)$">
+  <IfModule mod_authz_core.c>
+    # config.php tetap dapat di-include oleh PHP, hanya blokir bila diakses sebagai .md/.htaccess
+  </IfModule>
+</FilesMatch>
+
+# Nonaktifkan listing direktori
+Options -Indexes
+
+# Header keamanan
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
